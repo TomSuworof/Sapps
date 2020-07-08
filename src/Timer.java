@@ -12,7 +12,7 @@ public class Timer {
             String time_str = reader.readLine();
             int minutes = 0;
             int seconds;
-            
+
             if (time_str.contains(":")) {
                 String[] time_spl = time_str.split(":");
                 minutes = Integer.parseInt(time_spl[0]);
