@@ -1,15 +1,16 @@
-import java.applet.Applet;
-import java.applet.AudioClip;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
+import javax.sound.sampled.*;
+import java.awt.*;
+import java.io.*;
 
 public class Timer {
+    private static final String filepath = "D:\\Programs\\IntelliJIDEA\\Timer\\src\\alarm.wav";
+
     public static void main(String[] args) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("Enter time (format: 'min:sec' or 'sec'): ");
             String time_str = reader.readLine();
+            reader.close();
             int minutes = 0;
             int seconds;
 
@@ -22,17 +23,46 @@ public class Timer {
             }
 
             int time_sec = minutes * 60 + seconds;
-            AudioClip sound = Applet.newAudioClip(new URL("alarm.wav"));
-            Thread.sleep(1000 * time_sec);
-            sound.play();
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(AudioSystem.getAudioInputStream(new File(filepath)));
+
+            Thread.sleep(1000L * time_sec);
             System.out.println("TIME IS OVER");
 
-        } catch (IOException ioe) {
-            System.out.println("Wrong input");
+            if (SystemTray.isSupported()) {
+                displayNotification(time_str);
+            }
+
+            clip.start();
+            waitWhilePlaying(clip);
+            clip.close();
+
         } catch (NumberFormatException nfe) {
             System.out.println("Wrong number. Restart the program");
         } catch (InterruptedException ie) {
             System.out.println("Something went wrong");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    private static void waitWhilePlaying(Clip clip) throws InterruptedException {
+        while (!clip.isRunning()) {
+            Thread.sleep(10);
+        }
+        while (clip.isRunning()) {
+            Thread.sleep(10);
+        }
+    }
+
+    private static void displayNotification(String time) throws AWTException {
+        SystemTray tray = SystemTray.getSystemTray();
+        Image image = Toolkit.getDefaultToolkit().createImage("image.png");
+        TrayIcon trayIcon = new TrayIcon(image, "AlarmClock");
+        trayIcon.setImageAutoSize(true);
+        trayIcon.setToolTip("System tray alarm icon");
+        tray.add(trayIcon);
+        trayIcon.displayMessage("TIME IS OVER", time, TrayIcon.MessageType.INFO);
     }
 }
