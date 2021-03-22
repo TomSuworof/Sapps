@@ -1,3 +1,5 @@
+package Timer;
+
 import javax.sound.sampled.*;
 import java.awt.*;
 import java.io.*;
@@ -58,7 +60,7 @@ public class Timer {
 
     private static void displayNotification(String time) throws AWTException {
         SystemTray tray = SystemTray.getSystemTray();
-        Image image = Toolkit.getDefaultToolkit().createImage("image.png");
+        Image image = Toolkit.getDefaultToolkit().createImage("Timer/image.png");
         TrayIcon trayIcon = new TrayIcon(image, "AlarmClock");
         trayIcon.setImageAutoSize(true);
         trayIcon.setToolTip("System tray alarm icon");
