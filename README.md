@@ -4,5 +4,5 @@
 Simple console timer
 
 
-## Backlight manager
+## BacklightManager
 Simple backlight manager

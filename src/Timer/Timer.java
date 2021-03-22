@@ -5,7 +5,7 @@ import java.awt.*;
 import java.io.*;
 
 public class Timer {
-    private static final String filepath = "D:\\Programs\\IntelliJIDEA\\Timer\\src\\alarm.wav";
+    private static final String filepath = "src/Timer/alarm.wav";
 
     public static void main(String[] args) {
         try {
