@@ -6,7 +6,7 @@ public class BacklightManagerDemo {
     public static void main(String[] args) {
         try {
             BacklightManager manager = BacklightManager.getBacklightManager();
-            manager.adjustBrightness(0);
+            manager.adjustBrightness(100);
         } catch (IOException e) {
             e.printStackTrace();
         }

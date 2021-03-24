@@ -14,12 +14,20 @@ public abstract class BacklightManager {
         }
     }
 
-    public abstract void adjustBrightness(int level) throws IOException;
+    public final void adjustBrightness(int level) throws IOException {
+        if (level >= 0 && level <= 100) {
+            throw new IOException("R U KIDDING?! Available values: from 0 to 100");
+        }
+        adjust(level);
+    }
+
+    protected abstract void adjust(int level) throws IOException;
 
     private static class WindowsBacklightManager extends BacklightManager {
 
         @Override
-        public void adjustBrightness(int level) throws IOException {
+        public void adjust(int level) throws IOException {
+
             String command = "$myMonitor = Get-WmiObject -Namespace root\\wmi -Class WmiMonitorBrightnessMethods;"
                     + "$myMonitor.wmisetbrightness(4, " + level + ");";
             Runtime.getRuntime().exec("powershell.exe " + command);
@@ -29,8 +37,8 @@ public abstract class BacklightManager {
     private static class MacOSBacklightManager extends BacklightManager {
 
         @Override
-        public void adjustBrightness(int level) throws IOException {
-            Runtime.getRuntime().exec("homebrew brightness && brightness " + (level / 100));
+        public void adjust(int level) throws IOException {
+            Runtime.getRuntime().exec("brew install brightness && brightness " + (level / 100));
         }
     }
 }
