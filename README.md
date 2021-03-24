@@ -5,4 +5,7 @@ Simple console timer
 
 
 ## BacklightManager
-Simple backlight manager
+Simple screen backlight manager
+Requirements:
+- MacOS: homebrew
+- Windows: powershell

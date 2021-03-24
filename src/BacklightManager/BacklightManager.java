@@ -1,28 +1,36 @@
 package BacklightManager;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
-public class BacklightManager {
-    public static void main(String[] args) {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            String input = reader.readLine();
-            Robot robot = new Robot();
-            int key = KeyEvent.VK_F12;
-            while (!input.equalsIgnoreCase("exit")) {
-                if ("press".equalsIgnoreCase(input)) {
-                    robot.keyPress(key);
-                    System.out.println("Key pressed");
-                    robot.keyRelease(key);
-                    System.out.println("Key released");
-                } // does not work :(
-                input = reader.readLine();
-            }
-        } catch (IOException | AWTException e) {
-            e.printStackTrace();
+public abstract class BacklightManager {
+
+    public static BacklightManager getBacklightManager() throws IOException {
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            return new WindowsBacklightManager();
+        } else if (System.getProperty("os.name").startsWith("MacOS")) {
+            return new MacOSBacklightManager();
+        } else {
+            throw new IOException("unknown OS");
+        }
+    }
+
+    public abstract void adjustBrightness(int level) throws IOException;
+
+    private static class WindowsBacklightManager extends BacklightManager {
+
+        @Override
+        public void adjustBrightness(int level) throws IOException {
+            String command = "$myMonitor = Get-WmiObject -Namespace root\\wmi -Class WmiMonitorBrightnessMethods;"
+                    + "$myMonitor.wmisetbrightness(4, " + level + ");";
+            Runtime.getRuntime().exec("powershell.exe " + command);
+        }
+    }
+
+    private static class MacOSBacklightManager extends BacklightManager {
+
+        @Override
+        public void adjustBrightness(int level) throws IOException {
+            Runtime.getRuntime().exec("homebrew brightness && brightness " + (level / 100));
         }
     }
 }
